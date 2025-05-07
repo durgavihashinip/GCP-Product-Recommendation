@@ -1,0 +1,71 @@
+steps:
+  # --- Build Stage (Linting - Optional but Recommended) ---
+  - name: 'Run Flake8 Linting'
+    image: 'python:3.9'
+    entrypoint: 'python'
+    args: ['-m', 'pip', 'install', 'flake8']
+  - name: 'Run Flake8 on Currency Function'
+    image: 'python:3.9'
+    entrypoint: 'python'
+    args: ['-m', 'flake8', 'currency-function/main.py']
+  - name: 'Run Flake8 on Rate Updater Function'
+    image: 'python:3.9'
+    entrypoint: 'python'
+    args: ['-m', 'flake8', 'rate_updater/main.py']
+
+  # --- Test Stage (Basic Unit Tests - Expand as needed) ---
+  - name: 'Run Basic Unit Tests (Currency Function)'
+    image: 'python:3.9'
+    entrypoint: 'python'
+    args: ['-m', 'unittest', 'discover', '-s', 'currency-function', '-p', 'test_*.py']
+  - name: 'Run Basic Unit Tests (Rate Updater Function)'
+    image: 'python:3.9'
+    entrypoint: 'python'
+    args: ['-m', 'unittest', 'discover', '-s', 'rate_updater', '-p', 'test_*.py']
+
+  # --- Deploy Stage ---
+  - name: 'Deploy Currency Function'
+    image: 'google/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'currency-handler'
+      - '--runtime'
+      - 'python310' # Ensure this matches your function's runtime
+      - '--trigger-topic'
+      - 'currency-topic'
+      - '--entry-point'
+      - 'currency_handler'
+      - '--region=us-central1' # Ensure this matches your function's region
+      - '--service-account'
+      - 'pub-sub-1233@appspot.gserviceaccount.com' # Replace with your service account
+      - '--source'
+      - 'currency-function/'
+      - '--project'
+      - 'pub-sub-1233' # Replace with your project ID
+
+  - name: 'Deploy Rate Updater Function'
+    image: 'google/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'get_latest_rate_and_update_bq' # You might want to rename your function for clarity
+      - '--runtime'
+      - 'python311' # Ensure this matches your function's runtime
+      - '--trigger-topic'
+      - 'trigger-bigtable-to-bq' # Assuming this is the trigger
+      - '--entry-point'
+      - 'get_latest_rate_and_update_bq'
+      - '--region=us-central1' # Ensure this matches your function's region
+      - '--source'
+      - 'rate_updater/'
+      - '--set-env-vars'
+      - 'GCP_PROJECT=pub-sub-1233,BIGTABLE_INSTANCE_ID=currency-instance,BIGTABLE_TABLE_ID=currency-table' # Add other env vars as needed
+      - '--timeout=60s'
+      - '--memory=256MB'
+      - '--service-account'
+      - 'pub-sub-1233@appspot.gserviceaccount.com' # Replace with your service account
+      - '--project'
+      - 'pub-sub-1233' # Replace with your project ID
