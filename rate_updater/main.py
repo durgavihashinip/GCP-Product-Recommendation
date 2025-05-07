@@ -59,3 +59,4 @@ def get_latest_rate_and_update_bq(event, context):
         print("BigQuery table updated successfully.")
     except Exception as e:
         print(f"Error updating BigQuery: {e}")
+#check changes
