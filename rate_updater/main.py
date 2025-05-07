@@ -41,7 +41,7 @@ def get_latest_rate_and_update_bq(event, context):
 
     client_bq = bigquery.Client(project=project_id)
     table_ref = client_bq.dataset(bigquery_dataset_id).table(bigquery_rate_table_id)
-
+    #changes
     merge_sql = f"""
     MERGE `{project_id}.{bigquery_dataset_id}.{bigquery_rate_table_id}` T
     USING (SELECT TIMESTAMP('{max_ts.isoformat()}') as ts, CAST({found_rate} AS FLOAT64) as rate) S
