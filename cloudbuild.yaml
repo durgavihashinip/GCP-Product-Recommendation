@@ -1,5 +1,6 @@
 options:
   logging: CLOUD_LOGGING_ONLY
+
 steps:
   # Step 1: Deploy currency-function
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -15,7 +16,6 @@ steps:
       - --region=us-central1
       - --timeout=60s
       - --memory=128MB
-      - --env-vars-file=.env.yaml
 
   # Step 2: Deploy rate_updater
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -31,6 +31,5 @@ steps:
       - --region=us-central1
       - --timeout=60s
       - --memory=256MB
-      - --env-vars-file=.env.yaml
 
 timeout: 300s
