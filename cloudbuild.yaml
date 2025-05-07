@@ -15,7 +15,7 @@ steps:
       - --project=pub-sub-1233
       - --region=us-central1
       - --timeout=60s
-      - --memory=128MB
+      - --memory=256MB
 
   # Step 2: Deploy rate_updater
   - name: 'gcr.io/cloud-builders/gcloud'
