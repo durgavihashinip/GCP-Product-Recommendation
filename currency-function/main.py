@@ -25,3 +25,5 @@ def currency_handler(event, context):
     row.set_cell("currency_data", "inr", str(inr_rate))
     row.set_cell("currency_data", "timestamp", timestamp)
     row.commit()
+
+    #checking CI/CD pipeline
