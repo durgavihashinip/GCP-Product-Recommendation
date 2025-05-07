@@ -3,11 +3,11 @@ steps:
   - name: 'Run Unit Tests (Currency Function)'
     image: 'python:3.9'
     entrypoint: 'python'
-    args: ['-m', 'unittest', 'discover', '-s', 'currency-function', '-p', 'test_*.py']
+    args: ['-m', 'unittest', 'discover', '-s', 'currency-function', '-p', 'test.py']
   - name: 'Run Unit Tests (Rate Updater Function)'
     image: 'python:3.9'
     entrypoint: 'python'
-    args: ['-m', 'unittest', 'discover', '-s', 'rate_updater', '-p', 'test_*.py']
+    args: ['-m', 'unittest', 'discover', '-s', 'rate_updater', '-p', 'test.py']
 
   # --- Deploy Currency Function ---
   - name: 'Deploy Currency Function'
