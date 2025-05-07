@@ -1,0 +1,32 @@
+gcloud functions deploy process-currency-rate-new --runtime python311 --trigger-topic currency-fetch-requests --entry-point fetch_and_store_rate --region us-central1 --source currency-processor/ --set-env-vars GCP_PROJECT=pub-sub-1233,BIGTABLE_INSTANCE_ID=currency-instance,BIGTABLE_TABLE_ID=currency-rates,CURRENCY_API_URL=https://api.exchangerate-api.com/v4/latest/USD --timeout=60s --memory=256MB --service-account=pub-sub-1233@appspot.gserviceaccount.com --project=pub-sub-1233
+
+
+
+bigtable insance->currency-instance
+bigtabel instance id->currency-instance
+bigtable cluster->currency-cluster
+bigatbel name-> currency-rates   column family->rates-cf()
+
+pub/sub topi - > currency-fetch-requests
+subscription -> currency-fetch-requests-sub
+
+
+
+
+gcloud scheduler jobs create pubsub currency-scheduler-job  --schedule="*/2 * * * *" --time-zone="UTC" --topic=currency-topic --message-body="trigger"
+
+
+
+gcloud scheduler jobs create pubsub currency-scheduler-job --schedule="*/2 * * * *" --time-zone="UTC" --topic=currency-topic --message-body="trigger" --location=us-central1
+
+
+
+
+
+gcloud functions deploy process-currency-rate --runtime python311 --trigger-topic currency-fetch-requests --entry-point fetch_and_store_rate --region asia-south1 --source currency-processor/ --set-env-vars GCP_PROJECT=pub-sub-1233,BIGTABLE_INSTANCE_ID=currency-instance,BIGTABLE_TABLE_ID=currency-rates,CURRENCY_API_URL=https://api.exchangerate-api.com/v4/latest/USD --timeout=60s --memory=256MB --service-account=pub-sub-1233@appspot.gserviceaccount.com --project=pub-sub-1233
+
+
+gcloud functions deploy currency-handler --runtime python310 --trigger-topic currency-topic --entry-point currency_handler --region=us-central1 --service-account pub-sub-1233@appspot.gserviceaccount.com
+
+
+gcloud functions deploy currency-handler --service-account pub-sub-1233@appspot.gserviceaccount.com

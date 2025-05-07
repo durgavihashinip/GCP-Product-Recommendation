@@ -1,0 +1,16 @@
+1) push the csv to gcs.
+2) create a dataset in the project(in bigquery) -> create table kaggle_staging_table
+3) logic to clean k_s_t and write into kaggle_cleaned_table ->pending
+4) create pub/sub cloud scheduler that connects to big table and fetches the recent timestamp and writes that data into big query to bg_table
+5) from k_c_t and bg_table merge into a new table used for model training!
+
+gcloud functions deploy get_latest_rate_and_update_bq --runtime python310 --trigger-topic trigger-bigtable-to-bq --entry-point get_latest_rate_and_update_bq --set-env-vars GCP_PROJECT=pub-sub-1233 --region us-central1
+
+
+	
+2025-05-05 03:58:04.889336 UTC
+	
+2025-05-05 03:58:04.889336 UTC
+
+
+gcloud scheduler jobs create pubsub trigger-rate-job --schedule="*/30 * * * *" --time-zone="America/Chicago" --topic=trigger-bigtable-to-bq --message-body="{}" --location=us-central1
