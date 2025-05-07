@@ -43,6 +43,3 @@ class TestRateUpdaterFunction(unittest.TestCase):
         get_latest_rate_and_update_bq(None, None)
 
         mock_bigquery_client.query.assert_not_called() # Ensure BigQuery wasn't updated
-
-if __name__ == '__main__':
-    unittest.main()
