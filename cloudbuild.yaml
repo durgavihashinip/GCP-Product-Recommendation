@@ -1,34 +1,65 @@
 steps:
-  # Deploy Function 1: currency-handler (writes to Bigtable)
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - functions
-      - deploy
-      - currency-handler
-      - --runtime=python310
-      - --trigger-topic=currency-topic
-      - --entry-point=currency_handler
-      - --source=currency-function
-      - --region=us-central1
-      - --timeout=60s
-      - --memory=256MB
-      - --set-env-vars=BIGTABLE_INSTANCE=currency-instance,BIGTABLE_TABLE=currency-rates
+  # --- Test Stage ---
+  - name: 'Run Unit Tests (Currency Function)'
+    image: 'python:3.9'
+    entrypoint: 'python'
+    args: ['-m', 'unittest', 'discover', '-s', 'currency-function', '-p', 'test_*.py']
+  - name: 'Run Unit Tests (Rate Updater Function)'
+    image: 'python:3.9'
+    entrypoint: 'python'
+    args: ['-m', 'unittest', 'discover', '-s', 'rate_updater', '-p', 'test_*.py']
 
-  # Deploy Function 2: rate-updater (reads from Bigtable, writes to BigQuery)
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # --- Deploy Currency Function ---
+  - name: 'Deploy Currency Function'
+    image: 'google/cloud-sdk'
+    entrypoint: 'gcloud'
     args:
-      - functions
-      - deploy
-      - rate-updater
-      - --runtime=python310
-      - --trigger-topic=rate-topic
-      - --entry-point=get_latest_rate_and_update_bq
-      - --source=rate_updater
-      - --region=us-central1
-      - --timeout=60s
-      - --memory=256MB
-      - --set-env-vars=BIGQUERY_DATASET=Staging_Layer,BIGQUERY_TABLE=bq_latest_exchange_rate,BIGTABLE_INSTANCE=currency-instance,BIGTABLE_TABLE=currency-rates
+      - 'functions'
+      - 'deploy'
+      - 'currency-handler'
+      - '--runtime'
+      - 'python310'
+      - '--trigger-topic'
+      - 'currency-topic'
+      - '--entry-point'
+      - 'currency_handler'
+      - '--region=us-central1'
+      - '--service-account'
+      - 'pub-sub-1233@appspot.gserviceaccount.com'
+      - '--source'
+      - 'currency-function/'
+      - '--project'
+      - 'pub-sub-1233'
+    waitFor: ['Run Unit Tests (Currency Function)', 'Run Unit Tests (Rate Updater Function)'] # Deploy only if tests pass
+
+  # --- Deploy Rate Updater Function ---
+  - name: 'Deploy Rate Updater Function'
+    image: 'google/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'rate-updater'
+      - '--runtime'
+      - 'python311'
+      - '--trigger-topic'
+      - 'trigger-bigtable-to-bq'
+      - '--entry-point'
+      - 'get_latest_rate_and_update_bq'
+      - '--region=asia-south1'
+      - '--source'
+      - 'rate_updater/'
+      - '--set-env-vars'
+      - 'GCP_PROJECT=pub-sub-1233,BIGTABLE_INSTANCE_ID=currency-instance,BIGTABLE_TABLE_ID=currency-table'
+      - '--timeout=60s'
+      - '--memory=256MB'
+      - '--service-account'
+      - 'pub-sub-1233@appspot.gserviceaccount.com'
+      - '--project'
+      - 'pub-sub-1233'
+    waitFor: ['Run Unit Tests (Currency Function)', 'Run Unit Tests (Rate Updater Function)'] # Deploy only if tests pass
+
 
 options:
   logging: CLOUD_LOGGING_ONLY
-timeout: 300s
+timeout: 600s
