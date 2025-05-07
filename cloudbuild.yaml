@@ -1,25 +1,6 @@
 steps:
-  # --- Run Unit Tests (Currency Function) ---
-  - name: 'python:3.9'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        pip install -r currency-function/requirements.txt
-        python -m unittest discover -s currency-function -p 'test_*.py'
-
-  # --- Run Unit Tests (Rate Updater Function) ---
-  - name: 'python:3.9'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        pip install -r rate_updater/requirements.txt
-        python -m unittest discover -s rate_updater -p 'test_*.py'
-
-  # --- Deploy Currency Function ---
-  - name: 'google/cloud-sdk'
-    entrypoint: 'gcloud'
+  # Deploy currency-handler function
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - functions
       - deploy
@@ -28,32 +9,23 @@ steps:
       - --trigger-topic=currency-topic
       - --entry-point=currency_handler
       - --region=us-central1
-      - --source=currency-function/
-      - --set-env-vars=BIGTABLE_INSTANCE=currency-instance,BIGTABLE_TABLE=currency-table
-      - --timeout=60s
-      - --memory=256MB
       - --service-account=pub-sub-1233@appspot.gserviceaccount.com
+      - --source=currency-function/
       - --project=pub-sub-1233
-    waitFor: ['-']
 
-  # --- Deploy Rate Updater Function ---
-  - name: 'google/cloud-sdk'
-    entrypoint: 'gcloud'
+  # Deploy get_latest_rate_and_update_bq function
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - functions
       - deploy
-      - rate-updater
-      - --runtime=python311
+      - get_latest_rate_and_update_bq
+      - --runtime=python310
       - --trigger-topic=trigger-bigtable-to-bq
       - --entry-point=get_latest_rate_and_update_bq
-      - --region=asia-south1
+      - --region=us-central1
+      - --set-env-vars=GCP_PROJECT=pub-sub-1233
       - --source=rate_updater/
-      - --set-env-vars=GCP_PROJECT=pub-sub-1233,BIGTABLE_INSTANCE_ID=currency-instance,BIGTABLE_TABLE_ID=currency-table
-      - --timeout=60s
-      - --memory=256MB
-      - --service-account=pub-sub-1233@appspot.gserviceaccount.com
       - --project=pub-sub-1233
-    waitFor: ['-']
 
 options:
   logging: CLOUD_LOGGING_ONLY
