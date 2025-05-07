@@ -27,3 +27,5 @@ class TestCurrencyFunction(unittest.TestCase):
         mock_table.direct_row.assert_called()
         mock_row.set_cell.assert_any_call("currency_data", "inr", "80.0")
 
+if __name__ == '__main__':
+    unittest.main()
