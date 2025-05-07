@@ -56,7 +56,7 @@ def get_latest_rate_and_update_bq(event, context):
         print(f"Running query: {merge_sql}")
         query_job = client_bq.query(merge_sql)
         query_job.result()
-        print("BigQuery table updated successfully.")
+        print("BigQuery table updated successfully!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!.")
     except Exception as e:
         print(f"Error updating BigQuery: {e}")
 #check changes
