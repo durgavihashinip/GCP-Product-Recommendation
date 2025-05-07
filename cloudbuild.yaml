@@ -30,7 +30,7 @@ steps:
       - 'currency-function/'
       - '--project'
       - 'pub-sub-1233'
-    waitFor: ['Run Unit Tests (Currency Function)', 'Run Unit Tests (Rate Updater Function)'] # Deploy only if tests pass
+    waitFor: ['Run Unit Tests (Currency Function)', 'Run Unit Tests (Rate Updater Function)']
 
   # --- Deploy Rate Updater Function ---
   - name: 'Deploy Rate Updater Function'
@@ -57,9 +57,4 @@ steps:
       - 'pub-sub-1233@appspot.gserviceaccount.com'
       - '--project'
       - 'pub-sub-1233'
-    waitFor: ['Run Unit Tests (Currency Function)', 'Run Unit Tests (Rate Updater Function)'] # Deploy only if tests pass
-
-
-options:
-  logging: CLOUD_LOGGING_ONLY
-timeout: 600s
+    waitFor: ['Run Unit Tests (Currency Function)', 'Run Unit Tests (Rate Updater Function)']
