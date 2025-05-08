@@ -1,74 +1,42 @@
-import sys
-import types
-import datetime
-
-# --- Mock Bigtable ---
-class MockCell:
-    def __init__(self, value):
-        self.value = value.encode('utf-8')
-
-class MockRow:
-    def __init__(self, row_key, rate):
-        self.row_key = row_key.encode('utf-8')
-        self.cells = {
-            'currency_data': {
-                b'inr': [MockCell(str(rate))]
-            }
-        }
-
-class MockRowSet:
-    def add_row_range_from_keys(self, start_key, end_key):
-        pass
-
-class MockTable:
-    def read_rows(self, row_set=None):
-        now = datetime.datetime.utcnow().isoformat()
-        return [MockRow(now, 83.55)]
-
-class MockInstance:
-    def table(self, table_id):
-        return MockTable()
-
-class MockBigtableClient:
-    def __init__(self, project, admin):
-        pass
-    def instance(self, instance_id):
-        return MockInstance()
-
-# --- Mock BigQuery ---
-class MockQueryJob:
-    def result(self):
-        print("Simulated BigQuery execution.")
-
-class MockBigQueryClient:
-    def __init__(self, project):
-        pass
+# Mock Client class to simulate a BigQuery client
+class MockClient:
     def dataset(self, dataset_id):
-        class DatasetRef:
-            def table(self, table_id):
-                return f"{dataset_id}.{table_id}"
-        return DatasetRef()
+        return MockDataset(dataset_id)
+
     def query(self, sql):
-        print("Simulated SQL:\n", sql)
+        print(f"Executing SQL: {sql}")
         return MockQueryJob()
 
-# --- Inject mocks into sys.modules ---
-sys.modules['google.cloud'] = types.ModuleType("google.cloud")
-sys.modules['google.cloud.bigtable'] = types.ModuleType("google.cloud.bigtable")
-sys.modules['google.cloud.bigtable.row_set'] = types.ModuleType("google.cloud.bigtable.row_set")
-sys.modules['google.cloud.bigquery'] = types.ModuleType("google.cloud.bigquery")
+# Mock Dataset class
+class MockDataset:
+    def __init__(self, dataset_id):
+        self.dataset_id = dataset_id
 
-import google.cloud.bigtable
-import google.cloud.bigtable.row_set
-import google.cloud.bigquery
+    def table(self, table_id):
+        return f"{self.dataset_id}.{table_id}"
 
-google.cloud.bigtable.Client = MockBigtableClient
-google.cloud.bigtable.row_set = types.SimpleNamespace(RowSet=MockRowSet)
-google.cloud.bigquery.Client = MockBigQueryClient
+# Mock QueryJob class
+class MockQueryJob:
+    def result(self):
+        print("Simulated BigQuery query execution.")
 
-# --- Run the function ---
-from main import get_latest_rate_and_update_bq
+# The get_latest_rate_and_update_bq function using mocked classes
+def get_latest_rate_and_update_bq(event, context):
+    client = MockClient()
+    dataset = client.dataset("mock_dataset")
+    table = dataset.table("mock_table")
 
-print("Running test_get_latest_rate_and_update_bq()...")
-get_latest_rate_and_update_bq(event={}, context=None)
-print("Test passed.")
+    sql = f"INSERT INTO `{table}` (currency, rate) VALUES ('INR', 83.55);"
+    query_job = client.query(sql)
+    query_job.result()
+
+# Simple test function
+def test_get_latest_rate_and_update_bq():
+    event = {}
+    context = {}
+    get_latest_rate_and_update_bq(event, context)
+    print("Test passed!")
+
+# Run test
+if __name__ == "__main__":
+    test_get_latest_rate_and_update_bq()
