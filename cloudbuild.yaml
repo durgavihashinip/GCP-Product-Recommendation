@@ -7,6 +7,7 @@ steps:
       - '-c'
       - |
         cd currency-function
+        pip install --no-cache-dir google-cloud-bigtable google-cloud-core
         echo "Running currency-handler tests..."
         python tests/test_currency_handler.py
 
@@ -17,6 +18,7 @@ steps:
       - '-c'
       - |
         cd rate_updater
+        pip install --no-cache-dir google-cloud-bigtable google-cloud-bigquery google-cloud-core
         echo "Running get_latest_rate_and_update_bq tests..."
         python tests/test_get_latest_rate_and_update_bq.py
 
