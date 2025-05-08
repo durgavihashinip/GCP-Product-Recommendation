@@ -1,3 +1,4 @@
 google-cloud-bigtable
 google-cloud-bigquery
 requests
+google-cloud-core
