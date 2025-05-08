@@ -1,40 +1,38 @@
-# currency-function/tests/test_currency_handler.py
+import unittest
+from unittest.mock import patch, MagicMock
+from main import currency_handler
 
-# Mock Client class to simulate a Bigtable client
-class MockClient:
-    def table(self, table_id):
-        return MockTable(table_id)
+class TestCurrencyHandler(unittest.TestCase):
 
-# Mock Table class that simulates a Bigtable table
-class MockTable:
-    def __init__(self, table_id):
-        self.table_id = table_id
+    @patch('main.requests.get')
+    @patch('main.bigtable.Client')
+    def test_currency_handler_success(self, mock_bigtable_client, mock_requests_get):
+        # Mock API response
+        mock_requests_get.return_value.json.return_value = {
+            'rates': {'INR': 83.21}
+        }
 
-    def row(self, row_key):
-        return MockRow(row_key)
+        # Mock Bigtable client and related calls
+        mock_instance = MagicMock()
+        mock_table = MagicMock()
+        mock_row = MagicMock()
 
-# Mock Row class to simulate a row in a Bigtable
-class MockRow:
-    def __init__(self, row_key):
-        self.row_key = row_key
+        mock_bigtable_client.return_value.instance.return_value = mock_instance
+        mock_instance.table.return_value = mock_table
+        mock_table.direct_row.return_value = mock_row
 
-    def set_cell(self, column_family_id, column, value):
-        print(f"Set cell in row '{self.row_key}': {column_family_id}:{column} = {value}")
+        # Call the function
+        currency_handler(None, None)
 
-# The currency_handler function using mocked classes
-def currency_handler(event, context):
-    client = MockClient()
-    table = client.table("dummy_table_name")
-    row = table.row("row-key")
-    row.set_cell("cf1", "currency", "USD")
+        # Assertions
+        mock_requests_get.assert_called_once_with("https://api.exchangerate-api.com/v4/latest/USD")
+        mock_bigtable_client.assert_called_once()
+        mock_instance.table.assert_called_once_with("currency-table")
+        mock_table.direct_row.assert_called()
+        mock_row.set_cell.assert_any_call("currency_data", "usd", "1")
+        mock_row.set_cell.assert_any_call("currency_data", "inr", "83.21")
+        mock_row.set_cell.assert_any_call("currency_data", "timestamp", unittest.mock.ANY)
+        mock_row.commit.assert_called_once()
 
-# Simple test function
-def test_currency_handler():
-    event = {}
-    context = {}
-    currency_handler(event, context)
-    print("Test passed!")
-
-# Run test
-if __name__ == "__main__":
-    test_currency_handler()
+if __name__ == '__main__':
+    unittest.main()

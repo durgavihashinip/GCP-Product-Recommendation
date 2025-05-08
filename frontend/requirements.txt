@@ -1,0 +1,10 @@
+functions-framework==3.*
+pandas
+numpy
+scikit-learn
+google-cloud-bigquery
+google-cloud-storage
+spacy
+scipy
+requests
+bigframes
