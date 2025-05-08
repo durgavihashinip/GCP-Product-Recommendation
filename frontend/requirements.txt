@@ -4,9 +4,9 @@ numpy
 scikit-learn
 google-cloud-bigquery
 google-cloud-storage
-spacy
+spacy==3.6.0
 scipy
 requests
 bigframes
 pytest
-blis
+blis==0.7.9
