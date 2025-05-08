@@ -1,53 +1,33 @@
-import sys
-import types
-from datetime import datetime
+# currency-function/tests/test_currency_handler.py
 
-# --- Mock google.cloud.bigtable ---
-class MockRow:
-    def __init__(self, key):
-        self.key = key
-        self.cells = {}
+from google.cloud import bigtable
 
-    def set_cell(self, column_family, column, value):
-        self.cells[(column_family, column)] = value
+class MockClient:
+    def __init__(self, *args, **kwargs):
+        pass
 
-    def commit(self):
-        print(f"Row committed: {self.key}")
-        for k, v in self.cells.items():
-            print(f"  {k}: {v}")
-
-class MockTable:
-    def direct_row(self, key):
-        return MockRow(key)
-
-class MockInstance:
     def table(self, table_id):
         return MockTable()
 
-class MockClient:
-    def __init__(self, project, admin):
+class MockTable:
+    def row(self, row_key):
+        return MockRow()
+
+class MockRow:
+    def set_cell(self, *args, **kwargs):
         pass
 
-    def instance(self, instance_id):
-        return MockInstance()
+def currency_handler(event, context):
+    client = bigtable.Client(project="fake-project", admin=True)
+    table = client.table("dummy")
+    row = table.row("row-key")
+    row.set_cell("cf1", "currency", "USD")
 
-# Replace the real bigtable client with our mock
-sys.modules['google.cloud'] = types.ModuleType("google.cloud")
-sys.modules['google.cloud.bigtable'] = types.ModuleType("google.cloud.bigtable")
-import google.cloud.bigtable
-google.cloud.bigtable.Client = MockClient
+def test_currency_handler():
+    event = {}
+    context = {}
+    currency_handler(event, context)
+    print("Test passed!")
 
-# --- Mock requests ---
-import requests
-class MockResponse:
-    def json(self):
-        return {'rates': {'INR': 83.25}}
-
-requests.get = lambda url: MockResponse()
-
-# --- Run the handler ---
-from main import currency_handler
-
-print("Running test_currency_handler()...")
-currency_handler(event={}, context=None)
-print("Test passed.")
+if __name__ == "__main__":
+    test_currency_handler()

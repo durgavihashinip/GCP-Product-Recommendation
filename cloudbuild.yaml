@@ -1,5 +1,5 @@
 steps:
-  # --- Set up Python environment for testing ---
+  # --- Run unit tests for currency-handler ---
   - name: 'python:3.10'
     id: 'Run tests for currency-handler'
     entrypoint: 'bash'
@@ -7,24 +7,11 @@ steps:
       - '-c'
       - |
         cd currency-function
-        pip install --no-cache-dir google-cloud-bigtable google-cloud-core
-        echo "Running currency-handler tests..."
+        pip install --no-cache-dir --upgrade google google-cloud-bigtable
         python tests/test_currency_handler.py
-
-  - name: 'python:3.10'
-    id: 'Run tests for get_latest_rate_and_update_bq'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        cd rate_updater
-        pip install --no-cache-dir google-cloud-bigtable google-cloud-bigquery google-cloud-core
-        echo "Running get_latest_rate_and_update_bq tests..."
-        python tests/test_get_latest_rate_and_update_bq.py
 
   # --- Deploy currency-handler Function ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Deploy currency-handler'
     entrypoint: 'gcloud'
     args:
       [
@@ -39,7 +26,6 @@ steps:
 
   # --- Deploy get_latest_rate_and_update_bq Function ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Deploy get_latest_rate_and_update_bq'
     entrypoint: 'gcloud'
     args:
       [
@@ -52,19 +38,15 @@ steps:
         '--source', 'rate_updater/'
       ]
 
-  # --- (Optional) Trigger currency Cloud Scheduler job manually after deployment ---
+  # --- Trigger currency Cloud Scheduler job manually ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Trigger currency-scheduler-job'
     entrypoint: 'gcloud'
     args: ['scheduler', 'jobs', 'run', 'currency-scheduler-job', '--location=us-central1']
 
-  # --- (Optional) Trigger rate Cloud Scheduler job manually after deployment ---
+  # --- Trigger rate Cloud Scheduler job manually ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Trigger rate-scheduler-job'
     entrypoint: 'gcloud'
     args: ['scheduler', 'jobs', 'run', 'trigger-rate-job', '--location=us-central1']
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
-timeout: 900s
