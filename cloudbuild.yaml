@@ -7,13 +7,15 @@ steps:
   # --- Run unit tests for currency-handler ---
   - name: 'python:3.10'
     id: 'Run tests for currency-handler'
+    dir: currency-function
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         cd currency-function
         pip install -r /currency-function/requirements.txt
-        python tests/test_currency_handler.py
+        PYTHONPATH=. python3 -m unittest discover -s tests
+
 
   # --- Deploy currency-handler Function ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -32,6 +34,7 @@ steps:
   # --- Run unit tests for currency-handler ---
   - name: 'python:3.10'
     id: 'Run tests for get_latest_rate_and_update_bq'
+    dir: rate_updater
     entrypoint: 'bash'
     args:
       - '-c'
@@ -39,6 +42,8 @@ steps:
         cd rate_updater
         pip install -r /currency-function/requirements.txt
         python tests/test_get_latest_rate_and_update_bq.py
+        PYTHONPATH=. python3 -m unittest discover -s tests
+
         
   # --- Deploy get_latest_rate_and_update_bq Function ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'

@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from main import currency_handler
-
 class TestCurrencyHandler(unittest.TestCase):
 
     @patch('main.requests.get')
