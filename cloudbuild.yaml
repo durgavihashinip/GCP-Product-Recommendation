@@ -12,7 +12,7 @@ steps:
       - '-c'
       - |
         cd currency-function
-        pip install -r currency-function/requirements.txt
+        pip install -r /currency-function/requirements.txt
         python tests/test_currency_handler.py
 
   # --- Deploy currency-handler Function ---
@@ -37,7 +37,7 @@ steps:
       - '-c'
       - |
         cd rate_updater
-        pip install -r currency-function/requirements.txt
+        pip install -r /currency-function/requirements.txt
         python tests/test_get_latest_rate_and_update_bq.py
         
   # --- Deploy get_latest_rate_and_update_bq Function ---
