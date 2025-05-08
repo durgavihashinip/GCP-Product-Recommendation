@@ -42,7 +42,7 @@ steps:
   # --- Debugging step (optional but highly recommended) ---
   - name: 'alpine'
     entrypoint: 'sh'
-    args: ['-c', 'ls -R /workspace']
+    args: ['-c', 'ls -R /GRP-2']
 
   # --- Run BigQuery queries (Main execution step) ---
   - name: gcr.io/cloud-builders/gcloud
@@ -50,7 +50,7 @@ steps:
     args:
       - -c
       - |
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /workspace/data_pipeline/sql/clean_and_transform_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/sql/clean_and_transform_data.sql
 
   # --- Run BigQuery tests ---
   - name: gcr.io/cloud-builders/gcloud
@@ -58,10 +58,10 @@ steps:
     args:
       - -c
       - |
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /workspace/data_pipeline/tests/test_cleaned_data.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /workspace/data_pipeline/tests/test_transformed_data.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /workspace/data_pipeline/tests/test_data_completeness.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /workspace/data_pipeline/tests/test_referential_integrity.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_cleaned_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_transformed_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_data_completeness.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_referential_integrity.sql
 
 timeout: 600s
 
