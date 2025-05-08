@@ -13,7 +13,7 @@ steps:
       - |
         cd currency-function
         pip install --no-cache-dir --upgrade google google-cloud-bigtable
-        python /tests/test_currency_handler.py
+        python tests/test_currency_handler.py
 
   # --- Deploy currency-handler Function ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -29,6 +29,17 @@ steps:
         '--source', 'currency-function/'
       ]
 
+  # --- Run unit tests for currency-handler ---
+  - name: 'python:3.10'
+    id: 'Run tests for get_latest_rate_and_update_bq'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cd rate_updater
+        pip install --no-cache-dir --upgrade google google-cloud-bigtable
+        python tests/test_get_latest_rate_and_update_bq.py
+        
   # --- Deploy get_latest_rate_and_update_bq Function ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
