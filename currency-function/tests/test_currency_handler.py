@@ -7,19 +7,25 @@ class MockClient:
         pass
 
     def table(self, table_id):
-        return MockTable()
+        return MockTable(table_id)  # Simulate returning a MockTable
 
 class MockTable:
+    def __init__(self, table_id):
+        self.table_id = table_id
+
     def row(self, row_key):
-        return MockRow()
+        return MockRow(row_key)
 
 class MockRow:
+    def __init__(self, row_key):
+        self.row_key = row_key
+
     def set_cell(self, *args, **kwargs):
         pass
 
 def currency_handler(event, context):
     client = bigtable.Client(project="fake-project", admin=True)
-    table = client.table("dummy")
+    table = client.table("dummy_table_name")  # Use a real name if required here
     row = table.row("row-key")
     row.set_cell("cf1", "currency", "USD")
 
