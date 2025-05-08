@@ -1,10 +1,14 @@
+import os
 import pytest
 import pandas as pd
 import json
 from main import clean_and_extract_tags, content_based_recommendations
  
+current_dir = os.path.dirname(__file__)
+file_path = os.path.join(current_dir, 'test_data', 'sample_products.json')
+
 # Load real sample data
-with open('test_data/sample_products.json') as f:
+with open(file_path) as f:
     REAL_SAMPLE_DATA = pd.DataFrame(json.load(f))
  
 def test_with_real_data():
