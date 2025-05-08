@@ -97,13 +97,14 @@ steps:
   # Step 2: Run tests with verbose output
   - name: 'python:3.10'
     id: 'test'
+    dir: frontend
     entrypoint: bash
     args:
       - -c
       - |
+        cd frontend
         pip install -r requirements.txt
-        pip install pytest
-        pytest test_main.py 
+        PYTHONPATH=. python3 -m unittest discover -s tests
  
   # Step 3: Deploy to Cloud Functions with beauty-specific configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
