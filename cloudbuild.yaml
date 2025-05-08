@@ -1,6 +1,20 @@
-# cloudbuild.yaml
-
 steps:
+  # --- Debug: List all workspace files ---
+  - name: 'alpine'
+    entrypoint: 'sh'
+    args: ['-c', 'ls -R /']
+
+  # --- Run unit tests for currency-handler ---
+  - name: 'python:3.10'
+    id: 'Run tests for currency-handler'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cd currency-function
+        pip install --no-cache-dir --upgrade google google-cloud-bigtable
+        python /tests/test_currency_handler.py
+
   # --- Deploy currency-handler Function ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
@@ -29,41 +43,36 @@ steps:
         '--source', 'rate_updater/'
       ]
 
-  # --- (Optional) Trigger currency Cloud Scheduler job manually after deployment ---
+  # --- Trigger currency Cloud Scheduler job manually ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: ['scheduler', 'jobs', 'run', 'currency-scheduler-job', '--location=us-central1']
 
-  # --- (Optional) Trigger rate Cloud Scheduler job manually after deployment ---
+  # --- Trigger rate Cloud Scheduler job manually ---
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: ['scheduler', 'jobs', 'run', 'trigger-rate-job', '--location=us-central1']
 
-  # --- Debugging step (optional but highly recommended) ---
-  - name: 'alpine'
-    entrypoint: 'sh'
-    args: ['-c', 'ls -R /GRP-2']
-
-  # --- Run BigQuery queries (Main execution step) ---
+  # --- Run BigQuery transformation SQL ---
   - name: gcr.io/cloud-builders/gcloud
     entrypoint: bash
     args:
       - -c
       - |
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/sql/clean_and_transform_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < sql/clean_and_transform_data.sql
 
-  # --- Run BigQuery tests ---
+  # --- Run BigQuery test SQL queries ---
   - name: gcr.io/cloud-builders/gcloud
     entrypoint: bash
     args:
       - -c
       - |
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_cleaned_data.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_transformed_data.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_data_completeness.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < /GRP-2/tests/test_referential_integrity.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /sql/tests/test_cleaned_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /sql/tests/test_transformed_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /sql/tests/test_data_completeness.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < /sql/tests/test_referential_integrity.sql
 
-timeout: 600s
+timeout: 900s
 
 options:
   logging: CLOUD_LOGGING_ONLY
