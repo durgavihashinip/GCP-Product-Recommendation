@@ -115,7 +115,7 @@ steps:
       - '--runtime=python39'
       - '--trigger-http'
       - '--entry-point=main'
-      - '--source=.'
+      - '--source=frontend'
       - '--region=us-central1'
       - '--memory=2Gib'
       - '--allow-unauthenticated'
