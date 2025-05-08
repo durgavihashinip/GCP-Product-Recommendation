@@ -78,10 +78,10 @@ steps:
     args:
       - -c
       - |
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < sql/tests/test_cleaned_data.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < sql/tests/test_transformed_data.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < sql/tests/test_data_completeness.sql
-        bq query --use_legacy_sql=false --project_id=final-project-458404 < sql/tests/test_referential_integrity.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_cleaned_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_transformed_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_data_completeness.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_referential_integrity.sql
 
 timeout: 900s
 
