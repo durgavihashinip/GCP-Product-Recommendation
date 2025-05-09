@@ -120,7 +120,7 @@ steps:
         pip install -r frontend/requirements.txt
       
 
-  # Step 3: Deploy to Cloud Functions with beauty-specific configuration
+  # Step 3: Deploy to Cloud Functions with beauty-specific 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     id: 'deploy'
