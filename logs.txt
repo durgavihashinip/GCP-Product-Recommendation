@@ -119,3 +119,16 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: ['scheduler', 'jobs', 'run', 'rate-scheduler-job', '--location=us-central1']
+
+
+
+
+
+
+
+
+
+
+
+
+PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
