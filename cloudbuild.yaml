@@ -122,7 +122,7 @@ steps:
       libffi-dev \
       && \
       python -m pip install --upgrade pip setuptools wheel && \
-      pip install -r requirements.txt  # or pip install .
+      pip install -r frontend/requirements.txt  # or pip install .
  
       
 
