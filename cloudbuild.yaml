@@ -114,7 +114,7 @@ steps:
     args:
     - -c
     - |
-      apt-get update && apt-get install -y build-essential libblas-dev liblapack-dev libatlas-base-dev gfortran
+      apt-get update && apt-get install -y build-essential
       python3 -m ensurepip --upgrade
       pip install --upgrade setuptools wheel pip
       python3 -m pip install --prefer-binary -r frontend/requirements.txt
