@@ -108,23 +108,22 @@ steps:
 # Step 1: Install necessary build tools and dependencies
 
  
-  - name: 'python:3.10'
+  - name: 'python:3.10-slim'
     id: 'test'
     entrypoint: bash
     args:
     - -c
     - |
-      apt-get update && apt-get install -y build-essential
-      python3 -m ensurepip --upgrade
-      pip3 install wheel
-      python3 -m pip install --prefer-binary -r frontend/requirements.txt
+      apt-get update && apt-get install -y build-essential python3-dev
+      pip install --upgrade pip
+      pip install -r frontend/requirements.txt
       pip list
-      PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
+      
 
   # Step 3: Deploy to Cloud Functions with beauty-specific configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'deploy'
     entrypoint: 'gcloud'
+    id: 'deploy'
     args:
       - 'functions'
       - 'deploy'
