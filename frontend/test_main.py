@@ -1,5 +1,5 @@
 import os
-import pytest
+# import pytest
 import pandas as pd
 import json
 from main import clean_and_extract_tags, content_based_recommendations
