@@ -1,109 +1,111 @@
 steps:
-#   # --- Debug: List all workspace files ---
-#   # - name: 'alpine'
-#   #   entrypoint: 'sh'
-#   #   args: ['-c', 'ls -R /']
+  # --- Debug: List all workspace files ---
+  - name: 'alpine'
+    entrypoint: 'sh'
+    args: ['-c', 'ls -R /']
 
-#   # --- Run unit tests for currency-handler ---
-#   - name: 'python:3.10'
-#     id: 'Run tests for currency-handler'
-#     dir: currency-function
-#     entrypoint: 'bash'
-#     args:
-#       - '-c'
-#       - |
-#         cd currency-function
-#         pip install -r requirements.txt
-#         PYTHONPATH=. python3 -m unittest discover -s tests
+  # --- Run unit tests for currency-handler ---
+  - name: 'python:3.10'
+    id: 'Run tests for currency-handler'
+    dir: currency-function
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cd currency-function
+        pip install -r requirements.txt
+        PYTHONPATH=. python3 -m unittest discover -s tests
 
 
-#   # --- Deploy currency-handler Function ---
-#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#     entrypoint: 'gcloud'
-#     args:
-#       [
-#         'functions', 'deploy', 'currency-handler',
-#         '--runtime', 'python310',
-#         '--trigger-topic', 'currency-topic',
-#         '--entry-point', 'currency_handler',
-#         '--region', 'us-central1',
-#         '--service-account', 'pub-sub-1233@appspot.gserviceaccount.com',
-#         '--source', 'currency-function/'
-#       ]
+  # --- Deploy currency-handler Function ---
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+        'functions', 'deploy', 'currency-handler',
+        '--runtime', 'python310',
+        '--trigger-topic', 'currency-topic',
+        '--entry-point', 'currency_handler',
+        '--region', 'us-central1',
+        '--service-account', 'pub-sub-1233@appspot.gserviceaccount.com',
+        '--source', 'currency-function/'
+      ]
 
-#   # --- Run unit tests for currency-handler ---
-#   - name: 'python:3.10'
-#     id: 'Run tests for get_latest_rate_and_update_bq'
-#     dir: rate_updater
-#     entrypoint: 'bash'
-#     args:
-#       - '-c'
-#       - |
-#         cd rate_updater
-#         pip install -r requirements.txt
-#         python tests/test_get_latest_rate_and_update_bq.py
-#         PYTHONPATH=. python3 -m unittest discover -s tests
+  # --- Run unit tests for currency-handler ---
+  - name: 'python:3.10'
+    id: 'Run tests for get_latest_rate_and_update_bq'
+    dir: rate_updater
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        cd rate_updater
+        pip install -r requirements.txt
+        python tests/test_get_latest_rate_and_update_bq.py
+        PYTHONPATH=. python3 -m unittest discover -s tests
 
         
-#   # --- Deploy get_latest_rate_and_update_bq Function ---
-#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#     entrypoint: 'gcloud'
-#     args:
-#       [
-#         'functions', 'deploy', 'get_latest_rate_and_update_bq',
-#         '--runtime', 'python310',
-#         '--trigger-topic', 'trigger-bigtable-to-bq',
-#         '--entry-point', 'get_latest_rate_and_update_bq',
-#         '--region', 'us-central1',
-#         '--set-env-vars', 'GCP_PROJECT=pub-sub-1233',
-#         '--source', 'rate_updater/'
-#       ]
+  # --- Deploy get_latest_rate_and_update_bq Function ---
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+        'functions', 'deploy', 'get_latest_rate_and_update_bq',
+        '--runtime', 'python310',
+        '--trigger-topic', 'trigger-bigtable-to-bq',
+        '--entry-point', 'get_latest_rate_and_update_bq',
+        '--region', 'us-central1',
+        '--set-env-vars', 'GCP_PROJECT=pub-sub-1233',
+        '--source', 'rate_updater/'
+      ]
 
-#   # --- Trigger currency Cloud Scheduler job manually ---
-#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#     entrypoint: 'gcloud'
-#     args: ['scheduler', 'jobs', 'run', 'currency-scheduler-job', '--location=us-central1']
+  # --- Trigger currency Cloud Scheduler job manually ---
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['scheduler', 'jobs', 'run', 'currency-scheduler-job', '--location=us-central1']
 
-#   # --- Trigger rate Cloud Scheduler job manually ---
-#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#     entrypoint: 'gcloud'
-#     args: ['scheduler', 'jobs', 'run', 'trigger-rate-job', '--location=us-central1']
+  # --- Trigger rate Cloud Scheduler job manually ---
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['scheduler', 'jobs', 'run', 'trigger-rate-job', '--location=us-central1']
 
-#   # --- Run BigQuery transformation SQL ---
-#   - name: gcr.io/cloud-builders/gcloud
-#     entrypoint: bash
-#     args:
-#       - -c
-#       - |
-#         bq query --use_legacy_sql=false --project_id=final-project-458404 < sql/clean_and_transform_data.sql
+  # --- Run BigQuery transformation SQL ---
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < sql/clean_and_transform_data.sql
 
-#   # --- Run BigQuery test SQL queries ---
-#   - name: gcr.io/cloud-builders/gcloud
-#     entrypoint: bash
-#     args:
-#       - -c
-#       - |
-#         bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_cleaned_data.sql
-#         bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_transformed_data.sql
-#         bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_data_completeness.sql
-#         bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_referential_integrity.sql
-#   - name: 'python:3.10'
-#     id: 'install'
-#     entrypoint: 'pip'
-#     args: ['install', 'pandas', 'scikit-learn', 'pytest', 'bigframes']
-#     env:
-#       - 'PYTHONPATH=/tmp/packages'
+  # --- Run BigQuery test SQL queries ---
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_cleaned_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_transformed_data.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_data_completeness.sql
+        bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_referential_integrity.sql
+
+        
+  - name: 'python:3.10'
+    id: 'install'
+    entrypoint: 'pip'
+    args: ['install', 'pandas', 'scikit-learn', 'pytest', 'bigframes']
+    env:
+      - 'PYTHONPATH=/tmp/packages'
  
   # Step 2: Run tests with verbose output
-  # - name: 'python:3.10'
-  #   id: 'test'
-  #   entrypoint: bash
-  #   args:
-  #     - -c
-  #     - |
-  #       apt-get update && apt-get install -y build-essential
-  #       pip install -r frontend/requirements.txt
-  #       PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
+  - name: 'python:3.10'
+    id: 'test'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        apt-get update && apt-get install -y build-essential
+        pip install -r frontend/requirements.txt
+        PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
 
 # Step 1: Install necessary build tools and dependencies
 
