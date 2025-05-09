@@ -1,4 +1,3 @@
-import pytest
 from main import clean_and_extract_tags, content_based_recommendations
 import pandas as pd
 
