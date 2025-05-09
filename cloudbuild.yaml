@@ -128,7 +128,7 @@ steps:
  
       
 
-  # Step 3: Deploy to Cloud Functions with beauty-specific 
+  # Step 3: Deploy to Cloud Functions with beauty-specific configurations
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     id: 'deploy'
