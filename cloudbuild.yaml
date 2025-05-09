@@ -106,23 +106,20 @@ steps:
   #       PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
 
 # Step 1: Install necessary build tools and dependencies
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: bash
-    args: ['apt-get', 'update']
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'python:3.9-slim'
     args: ['apt-get', 'install', '-y', 'build-essential', 'python3-dev']
  
   # Step 2: Clear pip cache (to avoid corrupted package issues)
-  - name: 'gcr.io/cloud-builders/python'
+  - name: 'python:3.9-slim'
     entrypoint: bash
     args: ['-m', 'pip', 'cache', 'purge']
  
   # Step 3: Install required Python dependencies (including blis)
-  - name: 'gcr.io/cloud-builders/python'
+  - name: 'python:3.9-slim'
     entrypoint: bash
     args: ['-m', 'pip', 'install', '--no-cache-dir', 'blis']
 
-  - name: 'python:3.10'
+  - name: 'python:3.9-slim'
     id: 'test'
     entrypoint: bash
     args:
