@@ -5,7 +5,9 @@ scikit-learn
 google-cloud-bigquery
 google-cloud-storage
 spacy==3.8.5
+thinc==8.1.7
+blis==0.7.9
 scipy
 requests
 bigframes
-blis>=0.7.9,<0.8.0
+pytest
