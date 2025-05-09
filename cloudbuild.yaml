@@ -88,7 +88,7 @@ steps:
         bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_data_completeness.sql
         bq query --use_legacy_sql=false --project_id=final-project-458404 < tests/test_referential_integrity.sql
 
-        
+
   - name: 'python:3.10'
     id: 'install'
     entrypoint: 'pip'
@@ -98,7 +98,7 @@ steps:
  
   # Step 2: Run tests with verbose output
   - name: 'python:3.10'
-    id: 'test'
+    id: 'test1'
     entrypoint: bash
     args:
       - -c
@@ -111,7 +111,7 @@ steps:
 
  
   - name: 'python:3.10'
-    id: 'test'
+    id: 'test2'
     entrypoint: bash
     args:
     - -c
