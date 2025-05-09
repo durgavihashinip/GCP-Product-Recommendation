@@ -108,7 +108,7 @@ steps:
 # Step 1: Install necessary build tools and dependencies
 
  
-  - name: 'python:3.9-slim'
+  - name: 'python:3.10'
     id: 'test'
     entrypoint: bash
     args:
@@ -116,7 +116,7 @@ steps:
     - |
       apt-get update && apt-get install -y build-essential
       python3 -m ensurepip --upgrade
-      pip install --upgrade setuptools wheel pip
+      pip3 install wheel
       python3 -m pip install --prefer-binary -r frontend/requirements.txt
       pip list
       PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
