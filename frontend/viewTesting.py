@@ -56,7 +56,7 @@ def display_recommendations_horizontal(recommendations):
             st.markdown("---")
 
 def main():
-    st.title("WALMART Recommendation System")
+    st.title("RELANTO Recommendation System")
 
     user_id = st.number_input("Enter User ID:", min_value=0, step=1)
     item_name = st.text_input("Enter Item Name:")
