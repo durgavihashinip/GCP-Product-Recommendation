@@ -105,7 +105,7 @@ steps:
   #       pip install -r frontend/requirements.txt
   #       PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
  
-  - name: 'python:3.10'
+  - name: 'python:3.9'
     id: 'test'
     entrypoint: bash
     args:
