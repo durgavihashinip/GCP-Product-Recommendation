@@ -141,7 +141,8 @@ steps:
       - '--region=us-central1'
       - '--memory=2Gib'
       - '--allow-unauthenticated'
-      - service-account=my-function-sa@target-project.iam.gserviceaccount.com'  
+      - '--service-account'
+      - 'nl2sql@carbon-beanbag-452610-q6.iam.gserviceaccount.com'
     waitFor: ['test']
  
 options:
