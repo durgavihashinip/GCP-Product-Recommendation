@@ -108,7 +108,7 @@ steps:
 # Step 1: Install necessary build tools and dependencies
 
  
-  - name: 'python:3.10-slim'
+  - name: 'python:3.10'
     id: 'test'
     entrypoint: bash
     args:
@@ -134,7 +134,7 @@ steps:
       - 'functions'
       - 'deploy'
       - 'get-product-recommendation'
-      - '--runtime=python39'
+      - '--runtime=python310'
       - '--trigger-http'
       - '--entry-point=main'
       - '--source=frontend'
