@@ -9,7 +9,7 @@ def currency_handler(event, context):
     inr_rate = data['rates']['INR']
     timestamp = datetime.utcnow().isoformat()
 
-    # Hardcoded Bigtable config
+    # Hardcoded Bigtable confi
     project_id = "pub-sub-1233"
     instance_id = "currency-instance"
     table_id = "currency-table"
