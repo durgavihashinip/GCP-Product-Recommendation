@@ -9,4 +9,4 @@ scipy
 requests
 bigframes
 pytest
-#blis==0.7.9
+blis==0.7.9
