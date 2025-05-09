@@ -5,9 +5,6 @@ scikit-learn
 google-cloud-bigquery
 google-cloud-storage
 spacy
-thinc
-blis
 scipy
 requests
 bigframes
-pytest
