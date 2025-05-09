@@ -95,6 +95,16 @@ steps:
 #       - 'PYTHONPATH=/tmp/packages'
  
   # Step 2: Run tests with verbose output
+  # - name: 'python:3.10'
+  #   id: 'test'
+  #   entrypoint: bash
+  #   args:
+  #     - -c
+  #     - |
+  #       apt-get update && apt-get install -y build-essential
+  #       pip install -r frontend/requirements.txt
+  #       PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
+ 
   - name: 'python:3.10'
     id: 'test'
     entrypoint: bash
@@ -102,9 +112,12 @@ steps:
       - -c
       - |
         apt-get update && apt-get install -y build-essential
-        pip install -r frontend/requirements.txt
+        python3 -m ensurepip --upgrade
+        python3 -m pip install --upgrade pip setuptools
+        python3 -m pip install -r frontend/requirements.txt
+        pip list
         PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
- 
+
   # Step 3: Deploy to Cloud Functions with beauty-specific configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy'
