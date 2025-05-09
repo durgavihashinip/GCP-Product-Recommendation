@@ -106,9 +106,7 @@ steps:
   #       PYTHONPATH=frontend python3 -m unittest discover -s frontend -p 'test_*.py'
 
 # Step 1: Install necessary build tools and dependencies
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args: ['apt-get', 'install', '-y', 'build-essential', 'python3-dev']
+
  
   - name: 'python:3.9-slim'
     id: 'test'
