@@ -143,7 +143,7 @@ steps:
       - '--region=us-central1'
       - '--memory=2Gib'
       - '--allow-unauthenticated'
-    waitFor: ['test']
+    waitFor: ['test2']
  
 options:
   logging: CLOUD_LOGGING_ONLY
